@@ -1,6 +1,6 @@
 //write your code here
 
-export function createElement(type, props, ...children) {
+function createElement(type, props, ...children) {
   return {
     type,
     props: {
@@ -23,10 +23,21 @@ function createTextElement(text) {
 }
 
 
-function render(element, container) {
-  // TODO create dom nodes
-}
 
+function render(element, container) {
+  const dom =
+    element.type == "TEXT_ELEMENT"
+      ? document.createTextNode("")
+      : document.createElement(element.type);
+  const isProperty = key => key !== "children";
+  Object.keys(element.props)
+    .filter(isProperty)
+    .forEach(name => {
+      dom[name] = element.props[name];
+    });
+  element.props.children.forEach(child => render(child, dom));
+  container.appendChild(dom);
+}
 
 export default {
   createElement,
